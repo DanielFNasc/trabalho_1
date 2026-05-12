@@ -122,8 +122,25 @@ def Manchester_dif(sequencia : str):
             direcao = -direcao #apenas o 1 altera
 
 
+def MLT_3(sequencia :str):
+    nivelAtual = 0
+    lastNonZero = -1
+    for c in sequencia: 
+        if (c == '1' and nivelAtual != 0):
+            right(90*lastNonZero)
+            forward(TAMANHO_LINHA_CIMA)
+            nivelAtual = 0
+        elif (c == '1' and nivelAtual == 0):
+            lastNonZero = -lastNonZero
+            left(90*lastNonZero)
+            forward(TAMANHO_LINHA_CIMA)
+            nivelAtual = lastNonZero
+        setheading(0)
+        forward(TAMANHO_BIT)
+    pass
+
 #sequencia = input("Qual a dequencia de bits? ")
-sequencia = "01001110"
+sequencia = "01011011"
 
 
 wn = Screen()
@@ -135,10 +152,11 @@ home()
 desenha_eixos(sequencia)
 home()
 #NRZ_L(sequencia)
-NRZ_I(sequencia)
+#NRZ_I(sequencia)
 #AMI(sequencia)
 #pseudoternario(sequencia)
 #Manchester_dif(sequencia)
+MLT_3(sequencia)
 
 
 # Atualize a tela para ver as mudanças
