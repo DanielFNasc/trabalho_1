@@ -50,13 +50,13 @@ def NRZ_L(sequencia : str):
 
 def NRZ_I(sequencia : str):
 
-    direcao = -1
+    direcao = 1
     setheading(90)
     forward(TAMANHO_LINHA_CIMA)
     for c in sequencia: 
         setheading(0)
         if (c =='1'):
-            left(90*direcao)
+            right(90*direcao)
             forward(2*TAMANHO_LINHA_CIMA)
             direcao = -direcao
         setheading(0)
@@ -123,7 +123,7 @@ def Manchester_dif(sequencia : str):
 
 
 #sequencia = input("Qual a dequencia de bits? ")
-sequencia = "010011"
+sequencia = "01001110"
 
 
 wn = Screen()
@@ -135,10 +135,10 @@ home()
 desenha_eixos(sequencia)
 home()
 #NRZ_L(sequencia)
-#NRZ_I(sequencia)
+NRZ_I(sequencia)
 #AMI(sequencia)
 #pseudoternario(sequencia)
-Manchester_dif(sequencia)
+#Manchester_dif(sequencia)
 
 
 # Atualize a tela para ver as mudanças
