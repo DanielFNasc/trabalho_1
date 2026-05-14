@@ -95,7 +95,62 @@ def pseudoternario(sequencia :str):
         setheading(0)
         forward(TAMANHO_BIT)
 
+def Manchester(sequencia : str):
 
+    tamanho_vertical = TAMANHO_LINHA_CIMA
+
+    ultimo_bit = sequencia[0]
+
+    # 1 = cima
+    # -1 = baixo
+
+    #desenha o primeiro bit
+    if (ultimo_bit == '0'):
+        direcao = 1
+
+    else:
+        direcao = -1
+
+    left(90*direcao)
+    forward(tamanho_vertical)
+
+    setheading(0)
+    forward(TAMANHO_BIT/2)
+
+    right(90*direcao)
+    forward(2*tamanho_vertical)
+
+    direcao = -direcao
+
+    setheading(0)
+    forward(TAMANHO_BIT/2)
+
+    #começa a partir da segunda posição
+    sequencia = sequencia[1:]
+
+    for c in sequencia:
+
+        #bits iguais, precisa transição no começo
+        if (ultimo_bit == c):
+            direcao = -direcao #inverte a direção
+            left(90*direcao)
+            forward(2*tamanho_vertical)
+
+        #primeira metade horizontal
+        setheading(0)
+        forward(TAMANHO_BIT/2)
+
+        #transição obrigatória no meio
+        right(90*direcao)
+        forward(2*tamanho_vertical)
+
+        direcao = -direcao
+
+        #segunda metade horizontal
+        setheading(0)
+        forward(TAMANHO_BIT/2)
+
+        ultimo_bit = c
 
 def Manchester_dif(sequencia : str):
     direcao = -1
@@ -140,7 +195,7 @@ def MLT_3(sequencia :str):
     pass
 
 #sequencia = input("Qual a dequencia de bits? ")
-sequencia = "01011011"
+sequencia = "010011"
 
 
 wn = Screen()
@@ -155,8 +210,9 @@ home()
 #NRZ_I(sequencia)
 #AMI(sequencia)
 #pseudoternario(sequencia)
+Manchester(sequencia)
 #Manchester_dif(sequencia)
-MLT_3(sequencia)
+#MLT_3(sequencia)
 
 
 # Atualize a tela para ver as mudanças
