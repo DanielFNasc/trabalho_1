@@ -1,15 +1,30 @@
 from turtle import *
+import tkinter as tk
+from tkinter import ttk
 
 TAMANHO_LINHA_CIMA = 20
 TAMANHO_BIT = 20
 
-def desenha_eixos(sequencia : str):
+def desenha_eixos():
+    largura = 600
+    altura = 300
 
-    #eixo horizontal
-    for c in sequencia:
-        color("blue")
-        forward(TAMANHO_BIT*len(sequencia))
-    teleport(0)
+    # eixo x
+    setheading(0)
+    teleport(-(largura/2), 0)
+    color("blue")
+    forward(largura)
+    stamp()
+
+    # eixo y
+    teleport(0, -(altura/2))
+    setheading(90)
+    forward(altura)
+    stamp()
+    setheading(0)
+    
+    teleport(0,0)
+    
     color("black")
 
 def NRZ_L(sequencia : str):
@@ -194,32 +209,79 @@ def MLT_3(sequencia :str):
         forward(TAMANHO_BIT)
     pass
 
-#sequencia = input("Qual a dequencia de bits? ")
-sequencia = "010011"
+def criar_interface():
+    global entrada_bits, combo_metodo
+    
+    canvas = wn.getcanvas()
+    root = canvas.master # Acesso ao Tkinter puro
+    
+    # Pega altura para posicionar no topo
+    altura = wn.window_height()
+    largura = window_width()
+    y_pos = -(altura / 2) + 40 
+    x_pos = -(largura / 2) + 150
 
+    # input bits usuário
+    entrada_bits = tk.Entry(root)
+    entrada_bits.insert(0, "01011011") 
+    canvas.create_window(x_pos, y_pos, window=entrada_bits)
+    x_pos += 150
 
+    # combobox opção codificação
+    # QUANDO FOREM ADICIONAR CODIFICAÇÃO NOVA TEM QUE ADICIONAR AQUI NO COMBOBOX
+    opcoes = ["NRZ-L", "NRZ-I", "AMI", "Pseudoternário", "Manchester", "Manchester_dif", "MLT-3"] #!!!!!!!!!!!!!!!
+    combo_metodo = ttk.Combobox(root, values=opcoes, state="readonly")
+    combo_metodo.set("NRZ-L")
+    canvas.create_window(x_pos, y_pos, window=combo_metodo)
+    x_pos += 150
+
+    # botão atualizar
+    btn = tk.Button(root, text="Atualizar Gráfico", command=atualizar_grafico)
+    canvas.create_window(x_pos, y_pos, window=btn)
+
+def atualizar_grafico():
+    sequencia = entrada_bits.get()
+    metodo = combo_metodo.get()
+    
+    clear()
+    tracer(0)
+    hideturtle()
+    
+    desenha_eixos()
+    
+    # QUANDO FOREM ADICIONAR CODIFICAÇÃO NOVA TEM QUE ADICIONAR AQUI NO DICIONÁRIO!!!!!!!!!!!
+    # dicionário
+    funcoes = {
+        "NRZ-L": NRZ_L,
+        "NRZ-I": NRZ_I,
+        "AMI": AMI,
+        "Pseudoternário": pseudoternario,
+        "Manchester": Manchester,
+        "Manchester_dif": Manchester_dif,
+        "MLT-3": MLT_3
+    }
+    
+    # garante que ta no 0,0 antes de começar a codificação
+    teleport(0,0)
+    setheading(0)
+    
+    if metodo in funcoes:
+        funcoes[metodo](sequencia)
+        
+    update()
+
+# MAIN 
 wn = Screen()
 
 # Isso desativa as atualizações da tela
 wn.tracer(0)
+hideturtle()
 
 home()
-desenha_eixos(sequencia)
-home()
-#NRZ_L(sequencia)
-#NRZ_I(sequencia)
-#AMI(sequencia)
-#pseudoternario(sequencia)
-Manchester(sequencia)
-#Manchester_dif(sequencia)
-#MLT_3(sequencia)
-
-
-# Atualize a tela para ver as mudanças
-wn.update()
+    
+criar_interface()
+    
+atualizar_grafico()
 
 # Mantenha a janela aberta
 wn.mainloop()
-
-
-
