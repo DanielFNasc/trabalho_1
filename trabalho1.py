@@ -209,6 +209,70 @@ def MLT_3(sequencia :str):
         forward(TAMANHO_BIT)
     pass
 
+def m2B1Q(sequencia :str):
+    nivelAtual = 0
+    nivelAnterior = 0
+    for i in range(0, len(sequencia), 2):
+        setheading(0)
+        par = sequencia[i:i+2]
+
+        # guarda o nível anterior antes de atualizar
+        nivelAnterior = nivelAtual
+
+        # escolhe novo nível dependendo do sinal do nível anterior (lógica original preservada)
+        if nivelAnterior >= 0:
+            if par == '00':
+                nivelAtual = 1
+            elif par == '01':
+                nivelAtual = 3
+            elif par == '10':
+                nivelAtual = -1
+            elif par == '11':
+                nivelAtual = -3
+        else:
+            if par == '00':
+                nivelAtual = -1
+            elif par == '01':
+                nivelAtual = -3
+            elif par == '10':
+                nivelAtual = 1
+            elif par == '11':
+                nivelAtual = 3
+
+        # diferença entre níveis (positivo = sobe, negativo = desce)
+        if(nivelAnterior!=nivelAtual):
+            diferenca = nivelAtual + nivelAnterior
+        else:
+            diferenca = 0
+        print(f"nivelAnterior: {nivelAnterior}, nivelAtual: {nivelAtual}, diferenca: {diferenca}")
+        distancia = diferenca* TAMANHO_LINHA_CIMA
+        if diferenca == 0:
+            # sem transição vertical, apenas avancar
+            setheading(0)
+            forward(TAMANHO_BIT)
+            
+
+        # distância vertical absoluta
+        
+        # direção da transição: >0 = subir, <0 = descer
+        elif diferenca > 0:
+            # sobe: gira para cima (left 90), move, avança, volta para baixo
+            left(90)
+            forward(distancia)
+            setheading(0)
+            forward(TAMANHO_BIT)
+            right(90)
+            forward(distancia)
+        else:
+            # desce: gira para baixo (right 90), move, avança, volta para cima
+            left(90)
+            forward(distancia)
+            setheading(0)
+            forward(TAMANHO_BIT)
+            right(90)
+            forward(distancia)
+
+        
 def criar_interface():
     global entrada_bits, combo_metodo
     
@@ -229,7 +293,7 @@ def criar_interface():
 
     # combobox opção codificação
     # QUANDO FOREM ADICIONAR CODIFICAÇÃO NOVA TEM QUE ADICIONAR AQUI NO COMBOBOX
-    opcoes = ["NRZ-L", "NRZ-I", "AMI", "Pseudoternário", "Manchester", "Manchester_dif", "MLT-3"] #!!!!!!!!!!!!!!!
+    opcoes = ["NRZ-L", "NRZ-I", "AMI", "Pseudoternário", "Manchester", "Manchester_dif", "MLT-3", "2B1Q"] #!!!!!!!!!!!!!!!
     combo_metodo = ttk.Combobox(root, values=opcoes, state="readonly")
     combo_metodo.set("NRZ-L")
     canvas.create_window(x_pos, y_pos, window=combo_metodo)
@@ -258,7 +322,8 @@ def atualizar_grafico():
         "Pseudoternário": pseudoternario,
         "Manchester": Manchester,
         "Manchester_dif": Manchester_dif,
-        "MLT-3": MLT_3
+        "MLT-3": MLT_3,
+        "2B1Q": m2B1Q
     }
     
     # garante que ta no 0,0 antes de começar a codificação
