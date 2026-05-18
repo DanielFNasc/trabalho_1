@@ -18,7 +18,7 @@ def desenha_eixos():
     # eixo x
     setheading(0)
     teleport(-(largura/2), 0)
-    color("blue")
+    color("pink")
     forward(largura)
     stamp()
 
@@ -281,6 +281,29 @@ def m2B1Q(sequencia :str):
            
         nivelAnterior = nivelAtual
         
+def RZ(sequencia: str):
+    for c in sequencia:
+        setheading(0)
+        
+        if c == '1':
+            left(90) # sobe
+            forward(TAMANHO_LINHA_CIMA)
+            setheading(0)
+            forward(TAMANHO_BIT / 2) # desenha metade
+            right(90) # desce
+            forward(TAMANHO_LINHA_CIMA)
+        else:
+            right(90) # desce
+            forward(TAMANHO_LINHA_CIMA)
+            setheading(0)
+            forward(TAMANHO_BIT / 2) # desenha metade do bit
+            left(90) # sobe
+            forward(TAMANHO_LINHA_CIMA)
+        
+        # desenha a segunda metade do bit no eixo zero
+        setheading(0)
+        forward(TAMANHO_BIT / 2)
+
 def criar_interface():
     global entrada_bits, combo_metodo
     
@@ -301,9 +324,9 @@ def criar_interface():
 
     # combobox opção codificação
     # QUANDO FOREM ADICIONAR CODIFICAÇÃO NOVA TEM QUE ADICIONAR AQUI NO COMBOBOX
-    opcoes = ["NRZ-L", "NRZ-I", "AMI", "Pseudoternário", "Manchester", "Manchester_dif", "MLT-3", "2B1Q"] #!!!!!!!!!!!!!!!
+    opcoes = ["NRZ-L", "NRZ-I", "AMI", "Pseudoternário", "Manchester", "Manchester_dif", "MLT-3", "2B1Q", "RZ"] #!!!!!!!!!!!!!!!
     combo_metodo = ttk.Combobox(root, values=opcoes, state="readonly")
-    combo_metodo.set("2B1Q") # valor teste para o 2b1q
+    combo_metodo.set("NRZ-L") # valor inicial na combo
     canvas.create_window(x_pos, y_pos, window=combo_metodo)
     x_pos += 150
 
@@ -331,7 +354,8 @@ def atualizar_grafico():
         "Manchester": Manchester,
         "Manchester_dif": Manchester_dif,
         "MLT-3": MLT_3,
-        "2B1Q": m2B1Q
+        "2B1Q": m2B1Q,
+        "RZ" : RZ
     }
     
     # garante que ta no 0,0 antes de começar a codificação
