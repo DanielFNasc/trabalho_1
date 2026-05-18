@@ -4,7 +4,13 @@ from tkinter import ttk
 
 TAMANHO_LINHA_CIMA = 20
 TAMANHO_BIT = 20
-
+mapa = {
+    -3: 0,
+    -1: 1,
+     0: 1.5,
+     1: 2,
+     3: 3
+}
 def desenha_eixos():
     largura = 600
     altura = 300
@@ -210,6 +216,7 @@ def MLT_3(sequencia :str):
     pass
 
 def m2B1Q(sequencia :str):
+    
     nivelAtual = 0
     nivelAnterior = 0
     for i in range(0, len(sequencia), 2):
@@ -240,16 +247,19 @@ def m2B1Q(sequencia :str):
                 nivelAtual = 3
 
         # diferença entre níveis (positivo = sobe, negativo = desce)
-        if(nivelAnterior!=nivelAtual):
-            diferenca = nivelAtual + nivelAnterior
-        else:
-            diferenca = 0
+    
+        posAnterior = mapa[nivelAnterior]
+        posAtual = mapa[nivelAtual]
+
+        diferenca = posAtual - posAnterior
+        print(f"par: {par}")
         print(f"nivelAnterior: {nivelAnterior}, nivelAtual: {nivelAtual}, diferenca: {diferenca}")
         distancia = diferenca* TAMANHO_LINHA_CIMA
         if diferenca == 0:
             # sem transição vertical, apenas avancar
             setheading(0)
             forward(TAMANHO_BIT)
+            continue
             
 
         # distância vertical absoluta
@@ -261,17 +271,15 @@ def m2B1Q(sequencia :str):
             forward(distancia)
             setheading(0)
             forward(TAMANHO_BIT)
-            right(90)
-            forward(distancia)
-        else:
+           
+        elif diferenca < 0:
             # desce: gira para baixo (right 90), move, avança, volta para cima
             left(90)
             forward(distancia)
             setheading(0)
             forward(TAMANHO_BIT)
-            right(90)
-            forward(distancia)
-
+           
+        nivelAnterior = nivelAtual
         
 def criar_interface():
     global entrada_bits, combo_metodo
@@ -287,7 +295,7 @@ def criar_interface():
 
     # input bits usuário
     entrada_bits = tk.Entry(root)
-    entrada_bits.insert(0, "01011011") 
+    entrada_bits.insert(0, "0011011001")# valor teste para o 2b1q 
     canvas.create_window(x_pos, y_pos, window=entrada_bits)
     x_pos += 150
 
@@ -295,7 +303,7 @@ def criar_interface():
     # QUANDO FOREM ADICIONAR CODIFICAÇÃO NOVA TEM QUE ADICIONAR AQUI NO COMBOBOX
     opcoes = ["NRZ-L", "NRZ-I", "AMI", "Pseudoternário", "Manchester", "Manchester_dif", "MLT-3", "2B1Q"] #!!!!!!!!!!!!!!!
     combo_metodo = ttk.Combobox(root, values=opcoes, state="readonly")
-    combo_metodo.set("NRZ-L")
+    combo_metodo.set("2B1Q") # valor teste para o 2b1q
     canvas.create_window(x_pos, y_pos, window=combo_metodo)
     x_pos += 150
 
