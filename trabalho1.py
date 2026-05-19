@@ -327,7 +327,7 @@ def pseudoternario(sequencia :str):
        
 
 def Manchester(sequencia : str):
-
+    transicoes = 0
     tamanho_vertical = TAMANHO_LINHA_CIMA
 
     ultimo_bit = sequencia[0]
@@ -350,7 +350,7 @@ def Manchester(sequencia : str):
 
     right(90*direcao)
     forward(2*tamanho_vertical)
-
+    transicoes += 1
     direcao = -direcao
 
     setheading(0)
@@ -366,6 +366,7 @@ def Manchester(sequencia : str):
             direcao = -direcao #inverte a direção
             left(90*direcao)
             forward(2*tamanho_vertical)
+            transicoes += 1
 
         #primeira metade horizontal
         setheading(0)
@@ -374,7 +375,7 @@ def Manchester(sequencia : str):
         #transição obrigatória no meio
         right(90*direcao)
         forward(2*tamanho_vertical)
-
+        transicoes += 1
         direcao = -direcao
 
         #segunda metade horizontal
@@ -383,7 +384,14 @@ def Manchester(sequencia : str):
 
         ultimo_bit = c
 
+    escritor.write(
+        f"Nivel medio: {0:.2f}\nTransicoes: {transicoes}",
+        align="left",
+        font=("Arial", 12, "normal")
+    )
+
 def Manchester_dif(sequencia : str):
+    transicoes = 0
     direcao = -1
     setheading(90)
     forward(TAMANHO_LINHA_CIMA)
@@ -392,10 +400,12 @@ def Manchester_dif(sequencia : str):
         if (c =='0'):
             left(90*direcao)
             forward(2*TAMANHO_LINHA_CIMA)
+            transicoes += 1
             setheading(0)
             forward(TAMANHO_BIT/2)
             right(90*direcao)
             forward(2*TAMANHO_LINHA_CIMA)
+            transicoes += 1
             setheading(0)
             forward(TAMANHO_BIT/2)  
         if (c =='1'):
@@ -403,9 +413,16 @@ def Manchester_dif(sequencia : str):
             forward(TAMANHO_BIT/2)
             left(90*direcao)
             forward(2*TAMANHO_LINHA_CIMA)
+            transicoes += 1
             setheading(0)
             forward(TAMANHO_BIT/2)  
             direcao = -direcao #apenas o 1 altera
+
+    escritor.write(
+        f"Nivel medio: {0:.2f}\nTransicoes: {transicoes}",
+        align="left",
+        font=("Arial", 12, "normal")
+    )
 
 
 def MLT_3(sequencia :str):
