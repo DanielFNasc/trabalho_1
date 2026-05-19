@@ -167,7 +167,7 @@ def NRZ_L(sequencia : str):
 
 
     sequencia = sequencia[1:]
-    print(sequencia)
+
     for c in sequencia: 
         setheading(0)
         if (c =='0'):
@@ -369,8 +369,7 @@ def m2B1Q(sequencia :str):
         posAtual = mapa[nivelAtual]
 
         diferenca = posAtual - posAnterior
-        print(f"par: {par}")
-        print(f"nivelAnterior: {nivelAnterior}, nivelAtual: {nivelAtual}, diferenca: {diferenca}")
+
         distancia = diferenca* TAMANHO_LINHA_CIMA
         if diferenca == 0:
             # sem transição vertical, apenas avancar
