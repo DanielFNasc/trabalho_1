@@ -12,6 +12,10 @@ mapa = {
      3: 3
 }
 
+escritor = Turtle()
+escritor.hideturtle()
+escritor.penup()
+
 # FUNÇÕES DA INTERFACE --------------------
 def desenha_eixos(x_inicial, metodo):
     global largura
@@ -153,8 +157,15 @@ def atualizar_grafico():
         "RZ" : RZ
     }
     
+    escritor.clear()
+
     # garante que ta no x1,0 antes de começar a codificação
     teleport(x_grafico_1,0)
+    escritor.teleport(x_grafico_1,0)
+    escritor.setheading(0)
+    escritor.forward(230)
+    escritor.setheading(90)
+    escritor.forward(100)
     setheading(0)
     
     if metodo1 in funcoes:
@@ -162,6 +173,12 @@ def atualizar_grafico():
 
     # garante que ta no x2,0 
     teleport(x_grafico_2,0)
+    escritor.teleport(x_grafico_2,0)
+    escritor.setheading(0)
+    escritor.forward(230)
+    escritor.setheading(90)
+    escritor.forward(100)
+
     setheading(0)
     
     if metodo2 in funcoes:
@@ -175,16 +192,22 @@ def atualizar_grafico():
 def NRZ_L(sequencia : str):
 
     ultimo = '0'
+    nivelTotal = 0.0
+    transicoes = 0
+    # turtle auxiliar para texto
+    
 
     if (sequencia[0]=='0'):
         left(90)
         forward(TAMANHO_LINHA_CIMA)
         ultimo = '0'
+        nivelTotal = nivelTotal + 1
     if (sequencia[0]=='1'):
         right(90)
         forward(TAMANHO_LINHA_CIMA)
         ultimo = '1'
-    
+        nivelTotal = nivelTotal - 1
+        transicoes = transicoes +1
     setheading(0)
     forward(TAMANHO_BIT)
 
@@ -197,63 +220,111 @@ def NRZ_L(sequencia : str):
             if (ultimo == '1'):
                 left(90)
                 forward(2*TAMANHO_LINHA_CIMA)
+                transicoes = transicoes + 1
             ultimo = '0'
+            nivelTotal = nivelTotal + 1
 
         if (c =='1'):
             if (ultimo == '0'):
                 right(90)
                 forward(2*TAMANHO_LINHA_CIMA)
+                transicoes = transicoes + 1
             ultimo = '1'
+            nivelTotal = nivelTotal - 1
         
         setheading(0)
         forward(TAMANHO_BIT)
+    
+
+    nivelTotal = nivelTotal /(len(sequencia)+1)
+    escritor.write(
+        f"Nivel medio: {nivelTotal:.2f}\nTransicoes: {transicoes}",
+        align="left",
+        font=("Arial", 12, "normal")
+    )
 
 def NRZ_I(sequencia : str):
 
+    nivelTotal = 0.0
+    transicoes = 0
     direcao = 1
     setheading(90)
     forward(TAMANHO_LINHA_CIMA)
     for c in sequencia: 
         setheading(0)
+
         if (c =='1'):
             right(90*direcao)
             forward(2*TAMANHO_LINHA_CIMA)
             direcao = -direcao
+            transicoes = transicoes + 1
+        nivelTotal = nivelTotal + direcao
         setheading(0)
         forward(TAMANHO_BIT)
+
+    nivelTotal = nivelTotal/ len(sequencia)
+    escritor.write(
+        f"Nivel medio: {nivelTotal:.2f}\nTransicoes: {transicoes}",
+        align="left",
+        font=("Arial", 12, "normal")
+    )
     
 
 def AMI(sequencia :str):
+    nivelTotal = 0.0
+    transicoes = 0
     direcao = 1
     for c in sequencia: 
         setheading(0)
         if (c =='1'):
+            transicoes = transicoes + 2
             left(90*direcao)
             forward(TAMANHO_LINHA_CIMA)
             setheading(0)
             forward(TAMANHO_BIT)
             right(90*direcao)
-            forward(TAMANHO_LINHA_CIMA)   
+            forward(TAMANHO_LINHA_CIMA) 
+            nivelTotal = nivelTotal + direcao  
             direcao = -direcao
             continue 
         setheading(0)
         forward(TAMANHO_BIT)
 
+    nivelTotal = nivelTotal/ len(sequencia)
+    escritor.write(
+        f"Nivel medio: {nivelTotal:.2f}\nTransicoes: {transicoes}",
+        align="left",
+        font=("Arial", 12, "normal")
+    )
+        
+
 def pseudoternario(sequencia :str):
+    nivelTotal = 0.0
+    transicoes = 0
     direcao = 1
     for c in sequencia: 
         setheading(0)
         if (c =='0'):
+            transicoes = transicoes + 2
             left(90*direcao)
             forward(TAMANHO_LINHA_CIMA)
             setheading(0)
             forward(TAMANHO_BIT)
             right(90*direcao)
-            forward(TAMANHO_LINHA_CIMA)   
+            forward(TAMANHO_LINHA_CIMA)
+            nivelTotal = nivelTotal + direcao    
             direcao = -direcao
             continue 
         setheading(0)
         forward(TAMANHO_BIT)
+
+    nivelTotal = nivelTotal/ len(sequencia)
+    escritor.write(
+        f"Nivel medio: {nivelTotal:.2f}\nTransicoes: {transicoes}",
+        align="left",
+        font=("Arial", 12, "normal")
+    )
+       
 
 def Manchester(sequencia : str):
 
@@ -338,6 +409,8 @@ def Manchester_dif(sequencia : str):
 
 
 def MLT_3(sequencia :str):
+    transicoes = 0
+    nivelTotal = 0.0
     nivelAtual = 0
     lastNonZero = -1
     for c in sequencia: 
@@ -345,14 +418,25 @@ def MLT_3(sequencia :str):
             right(90*lastNonZero)
             forward(TAMANHO_LINHA_CIMA)
             nivelAtual = 0
+            transicoes = transicoes + 1
         elif (c == '1' and nivelAtual == 0):
             lastNonZero = -lastNonZero
             left(90*lastNonZero)
             forward(TAMANHO_LINHA_CIMA)
             nivelAtual = lastNonZero
+           
+            transicoes = transicoes + 1
         setheading(0)
         forward(TAMANHO_BIT)
-    pass
+        nivelTotal = nivelTotal + nivelAtual
+
+    nivelTotal = nivelTotal/ len(sequencia)
+    escritor.write(
+        f"Nivel medio: {nivelTotal:.2f}\nTransicoes: {transicoes}",
+        align="left",
+        font=("Arial", 12, "normal")
+    )
+      
 
 def m2B1Q(sequencia :str):
     
