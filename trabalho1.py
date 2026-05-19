@@ -1,6 +1,6 @@
-from turtle import *
-import tkinter as tk
-from tkinter import ttk
+from turtle import * # desenho
+import tkinter as tk # componentes da interface
+from tkinter import ttk #combobox
 
 TAMANHO_LINHA_CIMA = 20
 TAMANHO_BIT = 20
@@ -13,30 +13,35 @@ mapa = {
 }
 
 # FUNÇÕES DA INTERFACE --------------------
-def desenha_eixos():
-    largura = 600
+def desenha_eixos(x_inicial, metodo):
+    global largura
+    largura = 345
     altura = 300
 
-    # eixo x
+    # Título do gráfico
+    teleport(x_inicial + 50, 120)
+    write(metodo, font=("Arial", 12, "bold"))
+
+    # eixo x 
     setheading(0)
-    teleport(-(largura/2), 0)
+    teleport(x_inicial, 0)
     color("red")
     forward(largura)
     stamp()
 
-    # eixo y
-    teleport(0, -(altura/2))
+    # eixo y 
+    teleport(x_inicial, -(altura/2))
     setheading(90)
     forward(altura)
     stamp()
     setheading(0)
-    
+
     teleport(0,0)
     
     color("black")
 
 def criar_interface():
-    global entrada_bits, combo_metodo
+    global entrada_bits, combo_metodo1, combo_metodo2
     
     canvas = wn.getcanvas()
     root = canvas.master # Acesso ao Tkinter puro
@@ -49,16 +54,22 @@ def criar_interface():
 
     # input bits usuário
     entrada_bits = tk.Entry(root)
-    entrada_bits.insert(0, "0011011001")# valor teste para o 2b1q 
+    entrada_bits.insert(0, "0011011001") # valor inicial
     canvas.create_window(x_pos, y_pos, window=entrada_bits)
     x_pos += 150
 
     # combobox opção codificação
     # QUANDO FOREM ADICIONAR CODIFICAÇÃO NOVA TEM QUE ADICIONAR AQUI NO COMBOBOX
     opcoes = ["NRZ-L", "NRZ-I", "AMI", "Pseudoternário", "Manchester", "Manchester_dif", "MLT-3", "2B1Q", "RZ"] #!!!!!!!!!!!!!!!
-    combo_metodo = ttk.Combobox(root, values=opcoes, state="readonly")
-    combo_metodo.set("NRZ-L") # valor inicial na combo
-    canvas.create_window(x_pos, y_pos, window=combo_metodo)
+    combo_metodo1 = ttk.Combobox(root, values=opcoes, state="readonly")
+    combo_metodo1.set("NRZ-L") # valor inicial na combo
+    canvas.create_window(x_pos, y_pos, window=combo_metodo1)
+    x_pos += 150
+
+    # combobox 2
+    combo_metodo2 = ttk.Combobox(root, values=opcoes, state="readonly")
+    combo_metodo2.set("NRZ-I") # valor inicial na combo
+    canvas.create_window(x_pos, y_pos, window=combo_metodo2)
     x_pos += 150
 
     # botão atualizar
@@ -76,11 +87,10 @@ def linha_vertical_bit(x_pos):
     teleport(original_pos[0], original_pos[1]) # volta para onde tava
     color("black")
 
-def desenha_marcadores(sequencia):
+def desenha_marcadores(sequencia, x_inicial, metodo):
     penup()
-    x_inicial = 0
     y_texto = 70
-    if(combo_metodo.get() == "2B1Q"):
+    if(metodo == "2B1Q"):
         for i in range(0, len(sequencia), 2):
         
             par = sequencia[i:i+2]
@@ -112,16 +122,22 @@ def desenha_marcadores(sequencia):
     pendown()
 
 def atualizar_grafico():
+    global x_grafico_1, x_grafico_2
+    x_grafico_1 = -350
+    x_grafico_2 = 5
     sequencia = entrada_bits.get()
-    metodo = combo_metodo.get()
+    metodo1 = combo_metodo1.get()
+    metodo2 = combo_metodo2.get()
     
     clear()
     tracer(0)
     hideturtle()
     pensize(1)
-    desenha_eixos()
-    desenha_marcadores(sequencia)
-    
+    desenha_eixos(x_grafico_1, metodo1)
+    desenha_marcadores(sequencia, x_grafico_1, metodo1)
+    desenha_eixos(x_grafico_2, metodo2)
+    desenha_marcadores(sequencia, x_grafico_2, metodo2)
+
     # QUANDO FOREM ADICIONAR CODIFICAÇÃO NOVA TEM QUE ADICIONAR AQUI NO DICIONÁRIO!!!!!!!!!!!
     # dicionário
     pensize(2)
@@ -137,12 +153,19 @@ def atualizar_grafico():
         "RZ" : RZ
     }
     
-    # garante que ta no 0,0 antes de começar a codificação
-    teleport(0,0)
+    # garante que ta no x1,0 antes de começar a codificação
+    teleport(x_grafico_1,0)
     setheading(0)
     
-    if metodo in funcoes:
-        funcoes[metodo](sequencia)
+    if metodo1 in funcoes:
+        funcoes[metodo1](sequencia)
+
+    # garante que ta no x2,0 
+    teleport(x_grafico_2,0)
+    setheading(0)
+    
+    if metodo2 in funcoes:
+        funcoes[metodo2](sequencia)
         
     update()
 
