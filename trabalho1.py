@@ -80,18 +80,32 @@ def desenha_marcadores(sequencia):
     penup()
     x_inicial = 0
     y_texto = 70
-    
-    for i, bit in enumerate(sequencia):
-        x_meio = x_inicial + (TAMANHO_BIT / 2) # escrever bit centralizado
-        x_fim = x_inicial + TAMANHO_BIT
+    if(combo_metodo.get() == "2B1Q"):
+        for i in range(0, len(sequencia), 2):
         
-        teleport(x_meio - 2, y_texto)
-        color("pink") 
-        write(bit, font=("Arial", 12, "bold"))
+            par = sequencia[i:i+2]
+            x_meio = x_inicial + (TAMANHO_BIT) # escrever bit centralizado
+            x_fim = x_inicial + TAMANHO_BIT*2
+            
+            teleport(x_meio - 5, y_texto)
+            color("pink") 
+            write(par, font=("Arial", 12, "bold"))
 
-        linha_vertical_bit(x_fim)
-        
-        x_inicial += TAMANHO_BIT
+            linha_vertical_bit(x_fim)
+            
+            x_inicial += TAMANHO_BIT*2
+    else: 
+        for i, bit in enumerate(sequencia):
+            x_meio = x_inicial + (TAMANHO_BIT / 2) # escrever bit centralizado
+            x_fim = x_inicial + TAMANHO_BIT
+            
+            teleport(x_meio - 2, y_texto)
+            color("pink") 
+            write(bit, font=("Arial", 12, "bold"))
+
+            linha_vertical_bit(x_fim)
+            
+            x_inicial += TAMANHO_BIT
     
     color("black")
     teleport(0, 0) # volta pro o início para desenhar a onda
@@ -321,6 +335,7 @@ def m2B1Q(sequencia :str):
     
     nivelAtual = 0
     nivelAnterior = 0
+    tamanho2bit = TAMANHO_BIT * 2
     for i in range(0, len(sequencia), 2):
         setheading(0)
         par = sequencia[i:i+2]
@@ -360,7 +375,7 @@ def m2B1Q(sequencia :str):
         if diferenca == 0:
             # sem transição vertical, apenas avancar
             setheading(0)
-            forward(TAMANHO_BIT)
+            forward(tamanho2bit)
             continue
             
 
@@ -372,14 +387,14 @@ def m2B1Q(sequencia :str):
             left(90)
             forward(distancia)
             setheading(0)
-            forward(TAMANHO_BIT)
+            forward(tamanho2bit)
            
         elif diferenca < 0:
             # desce: gira para baixo (right 90), move, avança, volta para cima
             left(90)
             forward(distancia)
             setheading(0)
-            forward(TAMANHO_BIT)
+            forward(tamanho2bit)
            
         nivelAnterior = nivelAtual
         
