@@ -456,7 +456,8 @@ def MLT_3(sequencia :str):
       
 
 def m2B1Q(sequencia :str):
-    
+    transicoes = 0
+    nivelTotal= 0.0
     nivelAtual = 0
     nivelAnterior = 0
     tamanho2bit = TAMANHO_BIT * 2
@@ -487,13 +488,13 @@ def m2B1Q(sequencia :str):
             elif par == '11':
                 nivelAtual = 3
 
-        # diferença entre níveis (positivo = sobe, negativo = desce)
+        
     
         posAnterior = mapa[nivelAnterior]
         posAtual = mapa[nivelAtual]
 
         diferenca = posAtual - posAnterior
-
+        nivelTotal = nivelTotal + nivelAtual
         distancia = diferenca* TAMANHO_LINHA_CIMA
         if diferenca == 0:
             # sem transição vertical, apenas avancar
@@ -518,8 +519,20 @@ def m2B1Q(sequencia :str):
             forward(distancia)
             setheading(0)
             forward(tamanho2bit)
-           
+
+        if(nivelAtual != nivelAnterior and nivelAnterior!=0):
+            transicoes = transicoes + 1
+        
+        
         nivelAnterior = nivelAtual
+    print(f"nivel total final {nivelTotal}")
+    nivelTotal = nivelTotal/ len(sequencia)
+
+    escritor.write(
+        f"Nivel medio: {nivelTotal:.2f}\nTransicoes: {transicoes}",
+        align="left",
+        font=("Arial", 12, "normal")
+    )
         
 def RZ(sequencia: str):
     transicoes = 0
