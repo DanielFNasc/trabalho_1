@@ -505,6 +505,9 @@ def m2B1Q(sequencia :str):
         nivelAnterior = nivelAtual
         
 def RZ(sequencia: str):
+    transicoes = 0
+    nivelTotal = 0.0
+
     for c in sequencia:
         setheading(0)
         
@@ -515,6 +518,8 @@ def RZ(sequencia: str):
             forward(TAMANHO_BIT / 2) # desenha metade
             right(90) # desce
             forward(TAMANHO_LINHA_CIMA)
+            transicoes += 2  # uma subida e uma descida
+            nivelTotal += 0.5 # +1V por metade do tempo
         else:
             right(90) # desce
             forward(TAMANHO_LINHA_CIMA)
@@ -522,10 +527,22 @@ def RZ(sequencia: str):
             forward(TAMANHO_BIT / 2) # desenha metade do bit
             left(90) # sobe
             forward(TAMANHO_LINHA_CIMA)
+            transicoes += 2  # uma descida e uma subida
+            nivelTotal -= 0.5 # -1V por metade do tempo
         
         # desenha a segunda metade do bit no eixo zero
         setheading(0)
         forward(TAMANHO_BIT / 2)
+
+    # cálculo da média final
+    nivelMedio = nivelTotal / len(sequencia)
+
+    # escrita
+    escritor.write(
+        f"Nivel medio: {nivelMedio:.2f}\nTransicoes: {transicoes}",
+        align="left",
+        font=("Arial", 12, "normal")
+    )
 
 
 
