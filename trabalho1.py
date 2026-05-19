@@ -11,6 +11,8 @@ mapa = {
      1: 2,
      3: 3
 }
+
+# FUNÇÕES DA INTERFACE --------------------
 def desenha_eixos():
     largura = 600
     altura = 300
@@ -18,7 +20,7 @@ def desenha_eixos():
     # eixo x
     setheading(0)
     teleport(-(largura/2), 0)
-    color("pink")
+    color("red")
     forward(largura)
     stamp()
 
@@ -32,6 +34,106 @@ def desenha_eixos():
     teleport(0,0)
     
     color("black")
+
+def criar_interface():
+    global entrada_bits, combo_metodo
+    
+    canvas = wn.getcanvas()
+    root = canvas.master # Acesso ao Tkinter puro
+    
+    # Pega altura para posicionar no topo
+    altura = wn.window_height()
+    largura = window_width()
+    y_pos = -(altura / 2) + 40 
+    x_pos = -(largura / 2) + 150
+
+    # input bits usuário
+    entrada_bits = tk.Entry(root)
+    entrada_bits.insert(0, "0011011001")# valor teste para o 2b1q 
+    canvas.create_window(x_pos, y_pos, window=entrada_bits)
+    x_pos += 150
+
+    # combobox opção codificação
+    # QUANDO FOREM ADICIONAR CODIFICAÇÃO NOVA TEM QUE ADICIONAR AQUI NO COMBOBOX
+    opcoes = ["NRZ-L", "NRZ-I", "AMI", "Pseudoternário", "Manchester", "Manchester_dif", "MLT-3", "2B1Q", "RZ"] #!!!!!!!!!!!!!!!
+    combo_metodo = ttk.Combobox(root, values=opcoes, state="readonly")
+    combo_metodo.set("NRZ-L") # valor inicial na combo
+    canvas.create_window(x_pos, y_pos, window=combo_metodo)
+    x_pos += 150
+
+    # botão atualizar
+    btn = tk.Button(root, text="Atualizar Gráfico", command=atualizar_grafico)
+    canvas.create_window(x_pos, y_pos, window=btn)
+
+def linha_vertical_bit(x_pos):
+    original_pos = pos()
+    teleport(x_pos, 70)
+    setheading(270)
+    color("pink")
+    pendown()
+    forward(140)
+        
+    teleport(original_pos[0], original_pos[1]) # volta para onde tava
+    color("black")
+
+def desenha_marcadores(sequencia):
+    penup()
+    x_inicial = 0
+    y_texto = 70
+    
+    for i, bit in enumerate(sequencia):
+        x_meio = x_inicial + (TAMANHO_BIT / 2) # escrever bit centralizado
+        x_fim = x_inicial + TAMANHO_BIT
+        
+        teleport(x_meio - 2, y_texto)
+        color("pink") 
+        write(bit, font=("Arial", 12, "bold"))
+
+        linha_vertical_bit(x_fim)
+        
+        x_inicial += TAMANHO_BIT
+    
+    color("black")
+    teleport(0, 0) # volta pro o início para desenhar a onda
+    pendown()
+
+def atualizar_grafico():
+    sequencia = entrada_bits.get()
+    metodo = combo_metodo.get()
+    
+    clear()
+    tracer(0)
+    hideturtle()
+    pensize(1)
+    desenha_eixos()
+    desenha_marcadores(sequencia)
+    
+    # QUANDO FOREM ADICIONAR CODIFICAÇÃO NOVA TEM QUE ADICIONAR AQUI NO DICIONÁRIO!!!!!!!!!!!
+    # dicionário
+    pensize(2)
+    funcoes = {
+        "NRZ-L": NRZ_L,
+        "NRZ-I": NRZ_I,
+        "AMI": AMI,
+        "Pseudoternário": pseudoternario,
+        "Manchester": Manchester,
+        "Manchester_dif": Manchester_dif,
+        "MLT-3": MLT_3,
+        "2B1Q": m2B1Q,
+        "RZ" : RZ
+    }
+    
+    # garante que ta no 0,0 antes de começar a codificação
+    teleport(0,0)
+    setheading(0)
+    
+    if metodo in funcoes:
+        funcoes[metodo](sequencia)
+        
+    update()
+
+
+# FUNÇÕES DE CODIFICAÇÃO -----------------------
 
 def NRZ_L(sequencia : str):
 
@@ -304,70 +406,9 @@ def RZ(sequencia: str):
         setheading(0)
         forward(TAMANHO_BIT / 2)
 
-def criar_interface():
-    global entrada_bits, combo_metodo
-    
-    canvas = wn.getcanvas()
-    root = canvas.master # Acesso ao Tkinter puro
-    
-    # Pega altura para posicionar no topo
-    altura = wn.window_height()
-    largura = window_width()
-    y_pos = -(altura / 2) + 40 
-    x_pos = -(largura / 2) + 150
 
-    # input bits usuário
-    entrada_bits = tk.Entry(root)
-    entrada_bits.insert(0, "0011011001")# valor teste para o 2b1q 
-    canvas.create_window(x_pos, y_pos, window=entrada_bits)
-    x_pos += 150
 
-    # combobox opção codificação
-    # QUANDO FOREM ADICIONAR CODIFICAÇÃO NOVA TEM QUE ADICIONAR AQUI NO COMBOBOX
-    opcoes = ["NRZ-L", "NRZ-I", "AMI", "Pseudoternário", "Manchester", "Manchester_dif", "MLT-3", "2B1Q", "RZ"] #!!!!!!!!!!!!!!!
-    combo_metodo = ttk.Combobox(root, values=opcoes, state="readonly")
-    combo_metodo.set("NRZ-L") # valor inicial na combo
-    canvas.create_window(x_pos, y_pos, window=combo_metodo)
-    x_pos += 150
-
-    # botão atualizar
-    btn = tk.Button(root, text="Atualizar Gráfico", command=atualizar_grafico)
-    canvas.create_window(x_pos, y_pos, window=btn)
-
-def atualizar_grafico():
-    sequencia = entrada_bits.get()
-    metodo = combo_metodo.get()
-    
-    clear()
-    tracer(0)
-    hideturtle()
-    
-    desenha_eixos()
-    
-    # QUANDO FOREM ADICIONAR CODIFICAÇÃO NOVA TEM QUE ADICIONAR AQUI NO DICIONÁRIO!!!!!!!!!!!
-    # dicionário
-    funcoes = {
-        "NRZ-L": NRZ_L,
-        "NRZ-I": NRZ_I,
-        "AMI": AMI,
-        "Pseudoternário": pseudoternario,
-        "Manchester": Manchester,
-        "Manchester_dif": Manchester_dif,
-        "MLT-3": MLT_3,
-        "2B1Q": m2B1Q,
-        "RZ" : RZ
-    }
-    
-    # garante que ta no 0,0 antes de começar a codificação
-    teleport(0,0)
-    setheading(0)
-    
-    if metodo in funcoes:
-        funcoes[metodo](sequencia)
-        
-    update()
-
-# MAIN 
+# MAIN ----------------
 wn = Screen()
 
 # Isso desativa as atualizações da tela
